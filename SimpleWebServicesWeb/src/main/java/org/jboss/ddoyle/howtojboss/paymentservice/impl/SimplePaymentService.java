@@ -16,9 +16,9 @@ public class SimplePaymentService implements PaymentService {
 	 */
 	@Override
 	public String checkPayment(String in) {
-		String response = "DENIED";
+		String response = "INVALID";
 		if ("VISA".equals(in)) {
-			response = "APPROVED";
+			response = "VALID";
 		}
 		return response;
 	}
