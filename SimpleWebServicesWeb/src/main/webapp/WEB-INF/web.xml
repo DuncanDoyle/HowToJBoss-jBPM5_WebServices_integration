@@ -4,19 +4,19 @@
 <web-app>
  <display-name>Archetype Created Web Application</display-name>
  <servlet>
-  <servlet-name>WorldServiceServlet</servlet-name>
-  <servlet-class>org.jboss.ddoyle.howtojboss.worldservice.impl.SimpleWorldService</servlet-class>
+  <servlet-name>PaymentServiceServlet</servlet-name>
+  <servlet-class>org.jboss.ddoyle.howtojboss.paymentservice.impl.SimplePaymentService</servlet-class>
  </servlet>
  <servlet>
-  <servlet-name>HelloServiceServlet</servlet-name>
-  <servlet-class>org.jboss.ddoyle.howtojboss.helloservice.impl.SimpleHelloService</servlet-class>
+  <servlet-name>OrderServiceServlet</servlet-name>
+  <servlet-class>org.jboss.ddoyle.howtojboss.orderservice.impl.SimpleOrderService</servlet-class>
  </servlet>
  <servlet-mapping>
-  <servlet-name>WorldServiceServlet</servlet-name>
-  <url-pattern>/WorldService/*</url-pattern>
+  <servlet-name>PaymentServiceServlet</servlet-name>
+  <url-pattern>/PaymentService/*</url-pattern>
  </servlet-mapping>
  <servlet-mapping>
-  <servlet-name>HelloServiceServlet</servlet-name>
-  <url-pattern>/HelloService/*</url-pattern>
+  <servlet-name>OrderServiceServlet</servlet-name>
+  <url-pattern>/OrderService/*</url-pattern>
  </servlet-mapping>
 </web-app>
