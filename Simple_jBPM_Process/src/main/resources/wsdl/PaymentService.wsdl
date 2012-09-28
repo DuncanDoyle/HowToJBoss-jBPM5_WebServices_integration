@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://www.jboss.org/ddoyle/howtojboss/PaymentService/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	name="HelloService" targetNamespace="http://www.jboss.org/ddoyle/howtojboss/PaymentService/">
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://www.jboss.org/ddoyle/howtojboss/PaymentService/">
+			<xsd:element name="CheckPayment" type="tns:CheckPaymentType" />
+			<xsd:element name="CheckPaymentResponse" type="tns:CheckPaymentResponseType" />
+			<xsd:complexType name="CheckPaymentType">
+				<xsd:sequence>
+					<xsd:element name="in" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="CheckPaymentResponseType">
+				<xsd:sequence>
+					<xsd:element name="out" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="CheckPaymentRequest">
+		<wsdl:part element="tns:CheckPayment" name="parameters" />
+	</wsdl:message>
+	<wsdl:message name="CheckPaymentResponse">
+		<wsdl:part element="tns:CheckPaymentResponse" name="parameters" />
+	</wsdl:message>
+	<wsdl:portType name="PaymentService">
+		<wsdl:operation name="CheckPayment">
+			<wsdl:input message="tns:CheckPaymentRequest" />
+			<wsdl:output message="tns:CheckPaymentResponse" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="PaymentServiceSOAP" type="tns:PaymentService">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="CheckPayment">
+			<soap:operation
+				soapAction="http://www.jboss.org/ddoyle/howtojboss/HelloService/CheckPayment" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="PaymentService">
+		<wsdl:port binding="tns:PaymentServiceSOAP" name="PaymentServiceSOAP">
+			<soap:address location="http://www.example.org/" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
