@@ -24,20 +24,27 @@ import org.jboss.ddoyle.howtojboss.paymentservice.PaymentService_Service;
  */
 public class PaymentServiceJaxWsProxyWorkItemHandler implements WorkItemHandler {
 
+	private static final String ENDPOINT_ADDRESS_PARAM = "endpointAddress";
+	
+	private static final String INPUT_PARAM = "input";
+	
+	private static final String RESPONSE_PARAM = "paymentServiceResponse";
+	
 	public void executeWorkItem(WorkItem workItem, WorkItemManager workItemManager) {
 		/*
-		 *  First retrieve the parameter values passed in by the jBPM5 process.
-		 *  This will include the endpoint location of the PaymentService and the request parameter (as a String);
+		 * First retrieve the parameter values passed in by the jBPM5 process. This will include the endpoint location of the PaymentService
+		 * and the request parameter (as a String);
 		 */
 		Map<String, Object> parameters = workItem.getParameters();
-		
-		String endpointLocation = (String) parameters.get("location");
-		String request = (String) parameters.get("input");
-		
+
+		String endpointLocation = (String) parameters.get(ENDPOINT_ADDRESS_PARAM);
+		String request = (String) parameters.get(INPUT_PARAM);
+
 		/*
-		 * TODO: We should check whether we've actually retrieved the params, and if this is not the case, signal an error. Being lazy for now ;-)
+		 * TODO: We should check whether we've actually retrieved the params, and if this is not the case, signal an error. Being lazy for
+		 * now ;-)
 		 */
-		
+
 		/*
 		 * Retrieve the WSDL Location from the classpath and define the Service's QName.
 		 */
@@ -53,17 +60,16 @@ public class PaymentServiceJaxWsProxyWorkItemHandler implements WorkItemHandler 
 		BindingProvider bp = (BindingProvider) endpoint;
 
 		// Set the URL on the BindingProvider, so we can easily route to different addresses.
-		bp.getRequestContext().put(javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
-				endpointLocation);
+		bp.getRequestContext().put(javax.xml.ws.BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointLocation);
 
-		String response = endpoint.checkPayment(request);
-		
+		String response = endpoint.checkPaymentType(request);
+
 		Map<String, Object> responses = new HashMap<String, Object>();
-		
-		//And add the webservice response to the parameters map.
-		responses.put("paymentServiceResponse", response);
-		
-		//And complete the WorkItem
+
+		// And add the webservice response to the parameters map.
+		responses.put(RESPONSE_PARAM, response);
+
+		// And complete the WorkItem
 		workItemManager.completeWorkItem(workItem.getId(), responses);
 
 	}

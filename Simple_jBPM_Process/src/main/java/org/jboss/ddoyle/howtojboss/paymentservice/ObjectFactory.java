@@ -24,22 +24,14 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _CheckPayment_QNAME = new QName("http://www.jboss.org/ddoyle/howtojboss/PaymentService/", "CheckPayment");
-    private final static QName _CheckPaymentResponse_QNAME = new QName("http://www.jboss.org/ddoyle/howtojboss/PaymentService/", "CheckPaymentResponse");
+    private final static QName _CheckPaymentType_QNAME = new QName("http://www.jboss.org/ddoyle/howtojboss/PaymentService/", "CheckPaymentType");
+    private final static QName _CheckPaymentTypeResponse_QNAME = new QName("http://www.jboss.org/ddoyle/howtojboss/PaymentService/", "CheckPaymentTypeResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.jboss.ddoyle.howtojboss.paymentservice
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link CheckPaymentType }
-     * 
-     */
-    public CheckPaymentType createCheckPaymentType() {
-        return new CheckPaymentType();
     }
 
     /**
@@ -51,21 +43,29 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link CheckPaymentType }
+     * 
+     */
+    public CheckPaymentType createCheckPaymentType() {
+        return new CheckPaymentType();
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CheckPaymentType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.jboss.org/ddoyle/howtojboss/PaymentService/", name = "CheckPayment")
-    public JAXBElement<CheckPaymentType> createCheckPayment(CheckPaymentType value) {
-        return new JAXBElement<CheckPaymentType>(_CheckPayment_QNAME, CheckPaymentType.class, null, value);
+    @XmlElementDecl(namespace = "http://www.jboss.org/ddoyle/howtojboss/PaymentService/", name = "CheckPaymentType")
+    public JAXBElement<CheckPaymentType> createCheckPaymentType(CheckPaymentType value) {
+        return new JAXBElement<CheckPaymentType>(_CheckPaymentType_QNAME, CheckPaymentType.class, null, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CheckPaymentResponseType }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.jboss.org/ddoyle/howtojboss/PaymentService/", name = "CheckPaymentResponse")
-    public JAXBElement<CheckPaymentResponseType> createCheckPaymentResponse(CheckPaymentResponseType value) {
-        return new JAXBElement<CheckPaymentResponseType>(_CheckPaymentResponse_QNAME, CheckPaymentResponseType.class, null, value);
+    @XmlElementDecl(namespace = "http://www.jboss.org/ddoyle/howtojboss/PaymentService/", name = "CheckPaymentTypeResponse")
+    public JAXBElement<CheckPaymentResponseType> createCheckPaymentTypeResponse(CheckPaymentResponseType value) {
+        return new JAXBElement<CheckPaymentResponseType>(_CheckPaymentTypeResponse_QNAME, CheckPaymentResponseType.class, null, value);
     }
 
 }
