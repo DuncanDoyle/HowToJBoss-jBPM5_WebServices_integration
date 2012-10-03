@@ -35,9 +35,9 @@ public class JaxWsDispatcherWorkItemHandler implements WorkItemHandler {
 
 	private static final String SERVICE_NAME_PARAM = "serviceName";
 
-	private static final String PORT_NAMESPACE_PARAM = "portNamespace";
+	private static final String PORT_TYPE_NAMESPACE_PARAM = "portTypeNamespace";
 
-	private static final String PORT_NAME_PARAM = "portName";
+	private static final String PORT_TYPE_NAME_PARAM = "portTypeName";
 
 	private static final String SOAP_ACTION_PARAM = "soapAction";
 
@@ -47,26 +47,37 @@ public class JaxWsDispatcherWorkItemHandler implements WorkItemHandler {
 
 	private static final String RESPONSE_MAPPER_PARAM = "responseMapper";
 
-	private final RequestMapperFactory requestMapperFactory = new SimpleRequestMapperFactory();
+	private final RequestMapperFactory requestMapperFactory;
 
-	private final ResponseMapperFactory responseMapperFactory = new SimpleResponseMapperFactory();
+	private final ResponseMapperFactory responseMapperFactory;
 
 	/**
 	 * SLF4J Logger.
 	 */
 	private static final Logger LOGGER = LoggerFactory.getLogger(JaxWsDispatcherWorkItemHandler.class);
 
+	
+	public JaxWsDispatcherWorkItemHandler() {
+		this(new SimpleRequestMapperFactory(), new SimpleResponseMapperFactory());
+	}
+	
+	public JaxWsDispatcherWorkItemHandler(RequestMapperFactory requestMapperFactory, ResponseMapperFactory responseMapperFactory) {
+		this.requestMapperFactory = requestMapperFactory;
+		this.responseMapperFactory = responseMapperFactory;
+	}
+	
+	
 	public void executeWorkItem(WorkItem workItem, WorkItemManager workItemManager) {
 		/*
-		 * Obtain the workitem params. These should contain: - Service namespace. - Service name. - Port namespace. - Port name. - Endpoint
-		 * address
+		 * Obtain the workitem params. These should contain: - Service namespace. - Service name. - Port namespace. - Port name. - SOAP
+		 * action. - Endpoint. - RequestMapper name. - ResponseMapper name. address
 		 */
 		Map<String, Object> parameters = workItem.getParameters();
 
 		final String serviceNamespace = (String) parameters.get(SERVICE_NAMESPACE_PARAM);
 		final String serviceName = (String) parameters.get(SERVICE_NAME_PARAM);
-		final String portNamespace = (String) parameters.get(PORT_NAMESPACE_PARAM);
-		final String portName = (String) parameters.get(PORT_NAME_PARAM);
+		final String portNamespace = (String) parameters.get(PORT_TYPE_NAMESPACE_PARAM);
+		final String portName = (String) parameters.get(PORT_TYPE_NAME_PARAM);
 		final String soapAction = (String) parameters.get(SOAP_ACTION_PARAM);
 		final String endpointAddress = (String) parameters.get(ENDPOINT_ADDRESS_PARAM);
 
@@ -85,20 +96,20 @@ public class JaxWsDispatcherWorkItemHandler implements WorkItemHandler {
 		QName serviceQName = new QName(serviceNamespace, serviceName);
 
 		// QName for Port As defined in wsdl.
-		QName portQName = new QName(portNamespace, portName);
+		QName portTypeQName = new QName(portNamespace, portName);
 
 		// Create a dynamic Service instance
 		Service service = Service.create(serviceQName);
 
 		// Add a port to the Service
-		service.addPort(portQName, SOAPBinding.SOAP11HTTP_BINDING, endpointAddress);
+		service.addPort(portTypeQName, SOAPBinding.SOAP11HTTP_BINDING, endpointAddress);
 
 		/*
 		 * Create a dispatch instance. We can create a dispatcher with mode 'PAYLOAD' (the mode we're using here), which allows use to only
 		 * provide the SOAP Envelope Body's payload. In mode 'MESSAGE', we are responsible for creating the entire SOAP message, including
 		 * the header.
 		 */
-		Dispatch<Source> dispatcher = service.createDispatch(portQName, Source.class, Service.Mode.PAYLOAD);
+		Dispatch<Source> dispatcher = service.createDispatch(portTypeQName, Source.class, Service.Mode.PAYLOAD);
 
 		// Configure the SOAPAction
 		BindingProvider bp = (BindingProvider) dispatcher;
@@ -112,56 +123,18 @@ public class JaxWsDispatcherWorkItemHandler implements WorkItemHandler {
 		Source responsePayloadSource = dispatcher.invoke(requestPayloadSource);
 		LOGGER.info("Received response from Service: " + serviceNamespace + ":" + serviceName);
 
-		/* 
-		 * Build the response map. We're now using the output from the responseMapper directly, but one could, for example, also merge this output with the input parameters Map.
+		/*
+		 * Build the response map. We're now using the output from the responseMapper directly, but one could, for example, also merge this
+		 * output with the input parameters Map.
 		 */
 		Map<String, Object> responseMap = responseMapper.buildResponse(responsePayloadSource);
 
-		//And complete the workitem.
-		workItemManager.completeWorkItem(workItem.getId(),responseMap);
+		// And complete the workitem.
+		workItemManager.completeWorkItem(workItem.getId(), responseMap);
 	}
 
 	public void abortWorkItem(WorkItem arg0, WorkItemManager arg1) {
 		throw new IllegalStateException("This WorkItem cannot be aborted.");
 	}
-	
-	//TODO: Clean-up the code below.
 
-	/*
-	 * private Source buildSourceFromXmlString(String xmlString) {
-	 * 
-	 * DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	 * 
-	 * DocumentBuilder builder; Source src = null;
-	 * 
-	 * try { builder = factory.newDocumentBuilder(); Document document = builder.parse(new InputSource(new StringReader(xmlString))); src =
-	 * new DOMSource(document); } catch (ParserConfigurationException pce) { throw new
-	 * RuntimeException("Error converting XML String to XML Source.", pce); } catch (SAXException se) { throw new
-	 * RuntimeException("Error converting XML String to XML Source.", se); } catch (IOException ioe) { throw new
-	 * RuntimeException("Error converting XML String to XML Source.", ioe); } return src; }
-	 * 
-	 * private String buildXmlStringFromSource(Source source) { return ""; }
-	 */
-
-	/*
-	 * try { StringReader reader = new StringReader("<xml>blabla</xml>"); StringWriter writer = new StringWriter(); TransformerFactory
-	 * tFactory = TransformerFactory.newInstance(); Transformer transformer = tFactory.newTransformer(new
-	 * javax.xml.transform.stream.StreamSource("styler.xsl"));
-	 * 
-	 * transformer.transform(new javax.xml.transform.stream.StreamSource(reader), new javax.xml.transform.stream.StreamResult(writer));
-	 * 
-	 * String result = writer.toString(); } catch (Exception e) { e.printStackTrace(); }
-	 */
-
-	/*
-	 * DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	 * 
-	 * DocumentBuilder builder; try { builder = factory.newDocumentBuilder();
-	 * 
-	 * // Use String reader Document document = builder.parse(new InputSource(new StringReader(xmlString)));
-	 * 
-	 * TransformerFactory tranFactory = TransformerFactory.newInstance(); Transformer aTransformer = tranFactory.newTransformer(); Source
-	 * src = new DOMSource(document); Result dest = new StreamResult(new File("xmlFileName.xml")); aTransformer.transform(src, dest); }
-	 * catch (Exception e) { // TODO Auto-generated catch block e.printStackTrace(); }
-	 */
 }
