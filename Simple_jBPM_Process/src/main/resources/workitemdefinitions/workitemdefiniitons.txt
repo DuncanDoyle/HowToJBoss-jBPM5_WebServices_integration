@@ -1,0 +1,38 @@
+import org.drools.process.core.datatype.impl.type.StringDataType;
+
+[
+
+  [
+    "name" : "PaymentService",
+    "parameters" : [
+    	"endpointAddress" : new StringDataType(),
+    	"input" : new StringDataType()
+    ],
+    "results" : [
+        "paymentServiceResponse" : new StringDataType()
+    ],
+    "displayName" : "PaymentService",
+    "icon" : "",
+  ],
+
+  [
+    "name" : "JAX-WS-Dispatcher-Service",
+    "parameters" : [
+    	"serviceNamespace" : new StringDataType(),
+	"serviceName" : new StringDataType(),
+	"portTypeNamespace" : new StringDataType(),
+	"portTypeName" : new StringDataType(),
+	"soapAction" : new StringDataType(),
+	"endpointAddress" : new StringDataType(),
+	"requestMapper" : new StringDataType(),
+	"responseMapper" : new StringDataType(),
+    	"input" : new StringDataType()
+    ],
+    "results" : [
+        "response" : new StringDataType()
+    ],
+    "displayName" : "JAX-WS-Dispatcher-Service",
+    "icon" : "",
+  ]
+     
+]
